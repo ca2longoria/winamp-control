@@ -1,4 +1,11 @@
 
+/**
+WinAmp control script, node.js-side
+
+author: Cesar A. Longoria II
+copyright 2015, no rights reserved; use for whatever.
+*/
+
 fs = require('fs');
 http = require('http');
 cp = require('child_process');
