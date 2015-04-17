@@ -29,9 +29,9 @@ else if key = shuffle
 	key := "s"
 
 else if key = volup
-	key = {Up}{Up}{Up}{Up}{Up}{Up}
+	key = {Up 6}
 else if key = voldown
-	key = {Down}{Down}{Down}{Down}{Down}{Down}
+	key = {Down 6}
 
 ; For whatever reason, the WinAmp window's ahk_class is BaseWindow_RootWnd
 ; WinActivate, ahk_class BaseWindow_RootWnd

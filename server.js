@@ -3,14 +3,14 @@ fs = require('fs');
 http = require('http');
 cp = require('child_process');
 
+config = Object.freeze(JSON.parse(fs.readFileSync('config.json')));
 pwd = process.cwd();
-assumedDir = 'C:\\Users\\Cesar\\bin\\winamp-control';
 
 http.createServer(function(req,res)
 {
 	if (req.url === '/')
 	{
-		fs.readFile(assumedDir+'\\index.html',function(err,data)
+		fs.readFile(config.execDir+'\\index.html',function(err,data)
 		{
 			if (err)
 			{ console.log(err); return; }
@@ -40,13 +40,11 @@ http.createServer(function(req,res)
 		};
 		var command = req.url.slice(1);
 		
-		console.log('running command:',command);
-		
 		if (valid[command])
 		{
 			console.log('running command:',command);
 			
-			var child = cp.exec(assumedDir+'\\control.ahk '+command);
+			var child = cp.exec(config.execDir+'\\control.ahk '+command);
 			child.stdout.on('data',function(data)
 			{ console.log('out:',data) });
 			child.stderr.on('data',function(data)
@@ -56,8 +54,9 @@ http.createServer(function(req,res)
 		}
 		else
 		{
-			console.log(req.url);
-			res.end('SOMETHING SURELY');
+			console.log('invalid command:',req.url);
+			res.writeHead(400);
+			res.end('INVALID COMMAND');
 		}
 	}	
-}).listen(11711);
+}).listen(config.port);
