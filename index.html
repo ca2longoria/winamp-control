@@ -1,0 +1,115 @@
+
+<head>
+
+<script type='text/javascript'>
+	
+	function ajax(method,url,callback,error)
+	{
+		var req = new XMLHttpRequest();
+		req.open(method,url,true);
+		req.onload = function(e)
+		{
+			if (req.readyState === 4)
+			{
+				if (callback && req.status === 200)
+					callback(req);
+				if (error && req.status !== 200)
+					error(req);
+			}
+		};
+		req.onerror = function(e)
+		{ if (error) error(req) };
+		req.send(null);
+	}
+	
+	function onLoad()
+	{
+		Array.prototype.map.call(
+			document.querySelectorAll('.button'),
+			function(n)
+			{
+				n.innerHTML = n.id;
+				
+				n.addEventListener('click',function(e)
+				{
+					n.classList.add('pending');
+					
+					ajax('GET','/'+n.id,
+						function(req)
+						{
+							n.classList.remove('pending');
+						},
+						function(req)
+						{
+							// Error!
+							n.classList.remove('pending');
+							n.classList.add('error');
+							setTimeout(
+								function(){ n.classList.remove('error'); },
+								1500);
+						});
+				});
+				
+				n.addEventListener('mousedown',function(e)
+				{ e.preventDefault(); return false; });
+			});
+	}
+</script>
+
+<style type='text/css'>
+*[class^=buttonrow] {
+	display:block;
+	height:80px;
+	float:left;
+}
+*[class^=buttonrow]:not(:first-of-type) {
+	margin-left:30px;
+}
+
+.button {
+	width:80px;
+	height:60px;
+	background-color:#bbb;
+	border-top:1px solid black;
+	border-right:1px solid black;
+	border-bottom:1px solid black;
+	text-align:center;
+	line-height:55px;
+	float:left;
+	cursor:default;
+}
+.button:first-of-type {
+	border-left:1px solid black;
+}
+.button:hover {
+	color:#33f;
+}
+
+.pending {
+	background-color:#ffa;
+}
+.error {
+	background-color:#faa;
+}
+</style>
+</head>
+
+<body onload='onLoad()'>
+	<div class='buttonrow1'>
+		<div class='button' id='prev10'></div>
+		<div class='button' id='previous'></div>
+		<div class='button' id='pause'></div>
+		<div class='button' id='play'></div>
+		<div class='button' id='stop'></div>
+		<div class='button' id='next'></div>
+		<div class='button' id='next10'></div>
+	</div>
+	<div class='buttonrow2'>
+		<div class='button' id='volup'></div>
+		<div class='button' id='voldown'></div>
+	</div>
+	<div class='buttonrow3'>
+		<div class='button' id='shuffle'></div>
+		<div class='button' id='repeat'></div>
+	</div>
+</body>
