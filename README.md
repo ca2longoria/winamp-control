@@ -8,5 +8,5 @@ Threw this together while bunking down elsewhere in my apartment to draw, and gr
 Put it on GitHub, because why not?
 
 ### To-do list
-- [ ] could use a config file, instead of that blatant path literal... and for the port, too
+- [x] could use a config file, instead of that blatant path literal... and for the port, too
 - [ ] perhaps get the button/action list from the server and render the html divs on its own
