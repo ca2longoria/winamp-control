@@ -33,8 +33,10 @@ Use with an http request, using host IP, port, and command:
 * *server takes command and passes it to control.ahk*
 
 Examples:
-
-192.168.1.182:11711/
+* 192.168.1.182:11711/
+* 192.168.1.182:11711/play
+* 192.168.1.182:11711/voldown
+* 192.168.1.182:11711/stop
 
 ### To-do list
 - [x] could use a config file, instead of that blatant path literal... and for the port, too
