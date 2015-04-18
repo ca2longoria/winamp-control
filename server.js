@@ -17,7 +17,7 @@ http.createServer(function(req,res)
 {
 	if (req.url === '/')
 	{
-		fs.readFile(config.execDir+'\\index.html',function(err,data)
+		fs.readFile(__dirname+'\\index.html',function(err,data)
 		{
 			if (err)
 			{ console.log(err); return; }
@@ -51,7 +51,7 @@ http.createServer(function(req,res)
 		{
 			console.log('running command:',command);
 			
-			var child = cp.exec(config.execDir+'\\control.ahk '+command);
+			var child = cp.exec(__dirname+'\\control.ahk '+command);
 			child.stdout.on('data',function(data)
 			{ console.log('out:',data) });
 			child.stderr.on('data',function(data)
