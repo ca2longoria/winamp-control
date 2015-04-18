@@ -10,7 +10,7 @@ fs = require('fs');
 http = require('http');
 cp = require('child_process');
 
-config = Object.freeze(JSON.parse(fs.readFileSync('config.json')));
+config = Object.freeze(JSON.parse(fs.readFileSync(__dirname+'\\config.json')));
 pwd = process.cwd();
 
 http.createServer(function(req,res)
