@@ -1,7 +1,7 @@
 # winamp-control
 A tiny toy application to control a winamp window from the local network, uses **node.js** and **AutoHotkey**.
 
-Runs on **Windows** with **Firefox** or **Chrome**, maybe **Safari**?
+Runs on **Windows** with **Firefox**, **Chrome**, or **Safari**.
 
 Threw this together while bunking down elsewhere in my apartment to draw, and growing frustrated with having to get up every few minutes to mess with the music player.
 
