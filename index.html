@@ -1,6 +1,8 @@
 
 <head>
 
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
 <script type='text/javascript'>
 	
 	function ajax(method,url,callback,error)
@@ -59,7 +61,8 @@
 <style type='text/css'>
 *[class^=buttonrow] {
 	display:block;
-	height:80px;
+	margin-bottom:20px;
+	border-left:1px solid black;
 	float:left;
 }
 *[class^=buttonrow]:not(:first-of-type) {
@@ -77,9 +80,6 @@
 	line-height:55px;
 	float:left;
 	cursor:default;
-}
-.button:first-of-type {
-	border-left:1px solid black;
 }
 .button:hover {
 	color:#33f;
