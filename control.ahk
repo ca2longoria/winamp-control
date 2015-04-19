@@ -32,9 +32,9 @@ else if key = voldown
 	key = {Down 6}
 
 SetTitleMatchMode, 2
-WinActivate, Winamp
+WinActivate, - Winamp
 
-WinWaitActive, Winamp
+WinWaitActive, - Winamp
 
 FileAppend, key: %key%, output
 ControlSend, ahk_parent, %key%
