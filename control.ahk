@@ -4,20 +4,34 @@
 ; author: Cesar A. Longoria II
 ; copyright 2015, no rights reserved; use for whatever.
 
+#Include wa_ipc.ahk
+
 SetTitleMatchMode, 2
 
 key = %1%
 
-if key = test
+if key = msg
 {
 	thing = %2%
 	if thing = gettrack
 	{
-		SendMessage, 0x400, 0, 125, , ahk_class Winamp v1.x
-		if ErrorLevel <> FAIL
+		SendMessage, 0x400, 0, %IPC_GETLISTPOS%,, ahk_class Winamp v1.x
+		res = %ErrorLevel%
+		if res <> FAIL
 		{
-			currentTrack = %ErrorLevel%
-			FileAppend, ErrorLevel: %currentTrack%, output
+			FileAppend, gettrack ErrorLevel: %res%, output
+			ExitApp, %res%
+		}
+	}
+	else if thing = playlist
+	{
+		SendMessage, 0x400, 0, %IPC_WRITEPLAYLIST%,, ahk_class Winamp v1.x
+		res = %ErrorLevel%
+		if res <> FAIL
+		{
+			; Didn't fail... well, now server.js has to do some file reading.
+			FileAppend, playlist ErrorLevel: %res%, output
+			ExitApp, %res%
 		}
 	}
 	Exit

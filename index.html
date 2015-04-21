@@ -24,9 +24,14 @@
 		req.send(null);
 	}
 	
+	function getCurrentState()
+	{}
+	
 	function onLoad()
 	{
 		var nonsense = document.getElementById('nonsense');
+		var playlist = document.querySelector('#playlist');
+		
 		nonsense.addEventListener('keydown',function(e)
 		{
 			if (e.keyCode !== 13) // Enter
@@ -37,7 +42,7 @@
 				function(req){ console.log('Eh...?',req.responseText) });
 		});
 		nonsense.value = document.URL
-			+ 'test?a=b&one=3&but=what=even=equals=7?&you=know';
+			+ 'msg?playlist';
 		
 		Array.prototype.map.call(
 			document.querySelectorAll('.button'),
@@ -68,6 +73,35 @@
 				n.addEventListener('mousedown',function(e)
 				{ e.preventDefault(); return false; });
 			});
+		
+		var lastButton = document.querySelectorAll('.button');
+		lastButton = lastButton[lastButton.length-1];
+		
+		var br = lastButton.getBoundingClientRect();
+		var pr = playlist.getBoundingClientRect();
+		
+		var pageHeight = parseFloat(document.body.clientHeight);
+		var pageWidth = parseFloat(document.body.clientWidth);
+		
+		playlist.style.height = (pageHeight-br.bottom) - 3*(pageHeight-pr.bottom);
+		playlist.style.width = pageWidth - 2*pr.left;
+		
+		ajax('GET','/msg?playlist',function(req)
+		{
+			var tracks = JSON.parse(req.responseText);
+			
+			tracks.map(function(track)
+			{
+				var row = document.createElement('div');
+				row.classList.add('row');
+				if (track.currentTrack)
+					row.classList.add('current');
+				
+				row.innerHTML = track.title;
+				
+				playlist.appendChild(row);
+			});
+		});
 	}
 </script>
 
@@ -98,6 +132,27 @@
 	color:#33f;
 }
 
+#playlist {
+	position:fixed;
+	overflow-y:auto;
+	bottom:4px;
+	left:4px;
+	border:1px solid black;
+}
+#playlist > .row {
+	width:100%;
+	height:24px;
+	font-size:18px;
+	overflow-x:hidden;
+	text-overflow:ellipsis;
+}
+#playlist > .row:nth-child(2n) {
+	background-color:#ddd;
+}
+#playlist > .row.current {
+	background-color:#88d;
+}
+
 .pending {
 	background-color:#ffa;
 }
@@ -108,22 +163,25 @@
 </head>
 
 <body onload='onLoad()'>
-	<input id='nonsense'/ style='width:100%'>
-	<div class='buttonrow1'>
-		<div class='button' id='prev10'></div>
-		<div class='button' id='previous'></div>
-		<div class='button' id='pause'></div>
-		<div class='button' id='play'></div>
-		<div class='button' id='stop'></div>
-		<div class='button' id='next'></div>
-		<div class='button' id='next10'></div>
+	<div id='alladis'>
+		<input id='nonsense'/ style='width:100%'>
+		<div class='buttonrow1'>
+			<div class='button' id='prev10'></div>
+			<div class='button' id='previous'></div>
+			<div class='button' id='pause'></div>
+			<div class='button' id='play'></div>
+			<div class='button' id='stop'></div>
+			<div class='button' id='next'></div>
+			<div class='button' id='next10'></div>
+		</div>
+		<div class='buttonrow2'>
+			<div class='button' id='volup'></div>
+			<div class='button' id='voldown'></div>
+		</div>
+		<div class='buttonrow3'>
+			<div class='button' id='shuffle'></div>
+			<div class='button' id='repeat'></div>
+		</div>
 	</div>
-	<div class='buttonrow2'>
-		<div class='button' id='volup'></div>
-		<div class='button' id='voldown'></div>
-	</div>
-	<div class='buttonrow3'>
-		<div class='button' id='shuffle'></div>
-		<div class='button' id='repeat'></div>
-	</div>
+	<div id='playlist'></div>
 </body>
