@@ -26,6 +26,19 @@
 	
 	function onLoad()
 	{
+		var nonsense = document.getElementById('nonsense');
+		nonsense.addEventListener('keydown',function(e)
+		{
+			if (e.keyCode !== 13) // Enter
+				return;
+			
+			ajax('GET',nonsense.value,
+				function(req){ console.log(req.responseText) },
+				function(req){ console.log('Eh...?',req.responseText) });
+		});
+		nonsense.value = document.URL
+			+ 'test?a=b&one=3&but=what=even=equals=7?&you=know';
+		
 		Array.prototype.map.call(
 			document.querySelectorAll('.button'),
 			function(n)
@@ -95,6 +108,7 @@
 </head>
 
 <body onload='onLoad()'>
+	<input id='nonsense'/ style='width:100%'>
 	<div class='buttonrow1'>
 		<div class='button' id='prev10'></div>
 		<div class='button' id='previous'></div>

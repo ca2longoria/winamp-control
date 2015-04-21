@@ -1,3 +1,4 @@
 {
-	"port":11711
+	"port":11711,
+	"winampDir":"C:\\Program Files (x86)\\Winamp"
 }

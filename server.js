@@ -45,9 +45,47 @@ http.createServer(function(req,res)
 			'volup':true,
 			'voldown':true
 		};
-		var command = req.url.slice(1);
+		var command = req.url.replace(/^\/([^\?]+)(\?.*)?$/,'$1');
+		var keys = [];
+		var queries = (function(ob)
+		{
+			req.url.replace(/^\/([^\?]+)(\?(.*))?$/,'$3')
+				.split('&')
+				.map(function(s)
+				{
+					var a = s.split('=');
+					keys.push(a[0]);
+					ob[a[0]] = a.slice(1).join('=');
+				});
+			return ob;
+		})({});
+		console.log('queries',queries);
 		
-		if (valid[command])
+		if (keys.length > 0)
+		{
+			console.log('running query command:',command,queries);
+			
+			var args = [];
+			for (var p in queries)
+			{
+				args.push(decodeURIComponent(p+' '+queries[p]));
+			}
+			var execString =
+				__dirname+'\\control.ahk '+command+' '
+				+ args.join(' ');
+			console.log('exec string:',execString);
+			
+			var child = cp.exec(execString);
+			
+			child.stdout.on('data',function(data)
+			{ console.log('out:',data) });
+			child.stderr.on('data',function(data)
+			{ console.log('error:',data) });
+			child.on('close',function(code)
+			{ console.log('close:',code); res.end('closed:'+code); });
+		}
+		
+		else if (valid[command])
 		{
 			console.log('running command:',command);
 			
