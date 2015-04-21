@@ -13,23 +13,12 @@ if key = test
 	thing = %2%
 	if thing = gettrack
 	{
-		;SendMessage, 1024, 0, 120, , - Winamp
-		;SendMessage, 0x400, 0, 120, ahk_class BaseWindow_RootWnd
-		;SendMessage, 0x400, 0, 120, , - Winamp
-		;PostMessage, 0x400, 0, 0, , - Winamp
-		;PostMessage, 0x111, 40045, 0, , - Winamp
-		;WinActivate, - Winamp
-		;PostMessage, 0x111, 40047, 0, Winamp PE1, - Winamp
-		;PostMessage, 0x400, 0, 102, BaseWindow_RootWnd2, - Winamp
-		;PostMessage, 0x400, 0, 120, Winamp PE1, - Winamp
-		SendMessage, 0x400, 0, 120, , ahk_class Winamp v1.x
-		;WinActivate, ahk_class BaseWindow_RootWnd
+		SendMessage, 0x400, 0, 125, , ahk_class Winamp v1.x
 		if ErrorLevel <> FAIL
 		{
-			FileAppend, ErrorLevel: %ErrorLevel%, output
+			currentTrack = %ErrorLevel%
+			FileAppend, ErrorLevel: %currentTrack%, output
 		}
-		else
-			FileAppend, ErrorLevel FAIL: %ErrorLevel%, output
 	}
 	Exit
 }
