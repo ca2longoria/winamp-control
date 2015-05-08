@@ -5,6 +5,46 @@
 
 <script type='text/javascript'>
 	
+	function $q(query)
+	{ return document.querySelector(query) }
+	function $qq(query)
+	{ return document.querySelectorAll(query) }
+	function $cs(element,property)
+	{
+		var cs = window.getComputedStyle(element);
+		
+		if (arguments.length > 2)
+		{
+			var ret = {};
+			for (var i=1; i < arguments.length; ++i)
+			{
+				var k = arguments[i].toLowerCase()
+					.replace(/-([A-Za-z])/g,
+						function(match,letter){ return letter.toUpperCase() });
+				
+				// TODO: Get rid of one of these in favor of the other.
+				ret[arguments[i]] = cs.getPropertyValue(arguments[i]);
+				ret[k] = ret[arguments[i]];
+			}
+			
+			// A function for convenience.  Calling this replaces all *<postfix>
+			// values, like "34px", with parseFloat(<value>).
+			ret.floats = function()
+			{
+				var withFloats = {};
+				for (var p in this)
+					if (!isNaN(parseFloat(this[p])))
+						withFloats[p] = parseFloat(this[p]);
+					else
+						withFloats[p] = this[p];
+				return withFloats;
+			};
+			return ret;
+		}
+		else
+			return cs.getPropertyValue(property);
+	}
+	
 	function ajax(method,url,callback,error)
 	{
 		var req = new XMLHttpRequest();
@@ -26,6 +66,122 @@
 	
 	function getCurrentState()
 	{}
+	
+	function arrangeElements()
+	{
+		var page = $q('#page');
+			var refresh = $q('#refresh');
+			var topleft = $q('#topleft');
+				var buttonrow = $q('#buttonrow');
+				var volume = $q('#volume');
+			var trackbar = $q('#trackbar');
+		
+		var spacing = 5;
+		var barHeight = 30;
+		var refreshSize = {x:100,y:100};
+		
+		var cs = window.getComputedStyle($q('#page'));
+		var pageSize = {
+			x:Math.min(window.innerWidth,1024),
+			y:window.innerHeight
+		};
+		
+		page.style.width = pageSize.x;
+		page.style.height = pageSize.y;
+		
+		console.log(page.style.width,page.style.height);
+		
+		refresh.style.width = refreshSize.x;
+		refresh.style.height = refreshSize.y;
+		refresh.style.right = spacing;
+		refresh.style.top = spacing;
+		
+		topleft.style.width = pageSize.x - 3*spacing - refreshSize.x;
+		// height = conditional
+		topleft.style.left = spacing;
+		topleft.style.top = spacing;
+		
+		trackbar.style.width = pageSize.x - 2*spacing;
+		trackbar.style.height = barHeight;
+		// nevermind this: trackbar.style.left = spacing;
+		// top = conditional
+		
+		playlist.style.width = pageSize.x - 2*spacing;
+		// ?: height = conditional
+		playlist.style.left = spacing;
+		playlist.style.bottom = spacing;
+		
+		function arrangeVertical()
+		{
+			
+		}
+		
+		function arrangeElementsHorizontal()
+		{
+			//var buttonsRect = buttonrow.getBoundingClientRect();
+			var buttonrowProps = $cs(buttonrow,'width','height').floats();
+			var buttonProps =$cs($q('#repeat'),
+					'height','border-top-width','border-bottom-width').floats();
+			var volumeProps = $cs(volume,'width','height').floats();
+			
+			console.log(buttonProps);
+			
+			volume.style.left = buttonrowProps.width + spacing;
+			volume.style.top =
+				buttonrowProps.height
+				- volumeProps.height
+				- buttonProps.borderTopWidth
+				- buttonProps.borderBottomWidth;
+			volume.style.width =
+				pageSize.x
+				- buttonrowProps.width
+				- parseFloat(refresh.style.width)
+				- 4*spacing - 2; // Why the -2?
+			
+			trackbar.style.top =
+				buttonrowProps.height
+				//+ buttonProps.borderTopWidth
+				//+ buttonProps.borderBottomWidth
+				+ spacing - 1; // Why is the -1 necessary?
+			trackbar.style.width =
+				buttonrowProps.width
+				+ parseFloat(volume.style.width)
+				+ spacing;
+			
+			topleft.style.height =
+				buttonrowProps.height
+				+ parseFloat(trackbar.style.height)
+				+ spacing + 1; // Why the +1?
+			
+			playlist.style.height =
+				pageSize.y
+				- parseFloat(topleft.style.height)
+				- 3*spacing - 1; // Why the -1?  ... The parseFloat, no border
+			playlist.style.width =
+				pageSize.x
+				- 2*spacing - 2; // Why the -2?  Is it the borders?
+			
+			refresh.style.height =
+				pageSize.y
+				- parseFloat(playlist.style.height)
+				- 3*spacing - 1; // Why the -1?
+		}
+		
+		// Horizontal or Vertical conditional logic.
+		arrangeElementsHorizontal();
+	}
+	
+	function onLoad2()
+	{
+		// Check window resolution, determine if to display vertical or horizontal.
+			
+			// Arrange elements appropriately.
+			arrangeElements();
+			
+			// Assign resize listener.
+		
+		
+	}
 	
 	function onLoad()
 	{
@@ -106,18 +262,18 @@
 </script>
 
 <style type='text/css'>
-*[class^=buttonrow] {
+*[id^=buttonrow] {
 	display:block;
 	margin-bottom:20px;
 	border-left:1px solid black;
 	float:left;
 }
-*[class^=buttonrow]:not(:first-of-type) {
+*[id^=buttonrow]:not(:first-of-type) {
 	margin-left:30px;
 }
 
 .button {
-	width:80px;
+	width:60px;
 	height:60px;
 	background-color:#bbb;
 	border-top:1px solid black;
@@ -132,8 +288,31 @@
 	color:#33f;
 }
 
-#playlist {
+#page {
 	position:fixed;
+	top:0px;
+	left:0px;
+	border:1px solid red;
+}
+#topleft {
+	position:absolute;
+}
+#refresh {
+	position:absolute;
+	background-color:#fda;
+}
+#volume {
+	position:absolute;
+	height:30px;
+	border:1px solid black;
+}
+#trackbar {
+	position:absolute;
+	height:30px;
+	border:1px solid black;
+}
+#playlist {
+	position:absolute;
 	overflow-y:auto;
 	bottom:4px;
 	left:4px;
@@ -162,26 +341,27 @@
 </style>
 </head>
 
-<body onload='onLoad()'>
-	<div id='alladis'>
-		<input id='nonsense'/ style='width:100%'>
-		<div class='buttonrow1'>
-			<div class='button' id='prev10'></div>
-			<div class='button' id='previous'></div>
-			<div class='button' id='pause'></div>
-			<div class='button' id='play'></div>
-			<div class='button' id='stop'></div>
-			<div class='button' id='next'></div>
-			<div class='button' id='next10'></div>
+<body onload='onLoad2()'>
+	<div id='page'>
+		<!--<input id='nonsense' style='width:100%'/>-->
+		<div id='topleft'>
+			<div id='buttonrow'>
+				<div class='button' id='prev10'></div>
+				<div class='button' id='previous'></div>
+				<div class='button' id='pause'></div>
+				<div class='button' id='play'></div>
+				<div class='button' id='stop'></div>
+				<div class='button' id='next'></div>
+				<div class='button' id='next10'></div>
+				<div class='button' id='volup'></div>
+				<div class='button' id='voldown'></div>
+				<div class='button' id='shuffle'></div>
+				<div class='button' id='repeat'></div>
+			</div>
+			<div id='volume'></div>
+			<div id='trackbar'></div>
 		</div>
-		<div class='buttonrow2'>
-			<div class='button' id='volup'></div>
-			<div class='button' id='voldown'></div>
-		</div>
-		<div class='buttonrow3'>
-			<div class='button' id='shuffle'></div>
-			<div class='button' id='repeat'></div>
-		</div>
+		<div id='refresh'></div>
+		<div id='playlist'></div>
 	</div>
-	<div id='playlist'></div>
 </body>
